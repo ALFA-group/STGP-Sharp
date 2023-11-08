@@ -41,10 +41,10 @@ namespace STGP_Sharp
         private readonly Type _gpResultsStatsType;
         private readonly string? _checkPointSaveFile;
         public readonly IFitnessFunction fitnessFunction;
-        public readonly NamedArguments? namedArguments;
-        public readonly GpPopulationParameters populationParameters;
+        public NamedArguments? namedArguments;
+        public GpPopulationParameters populationParameters;
         public readonly PositionalArguments? positionalArguments;
-        public readonly GpExperimentProgressAbstract? progress;
+        public readonly IGpExperimentProgress? progress;
         public readonly Random rand;
         public readonly int? randomSeed;
         public readonly Type solutionReturnType;
@@ -65,7 +65,7 @@ namespace STGP_Sharp
             TimeoutInfo timeoutInfo,
             int? randomSeed = null,
             bool verbose = false,
-            GpExperimentProgressAbstract? progress = null,
+            IGpExperimentProgress? progress = null,
             NamedArguments? namedArguments = null,
             PositionalArguments? positionalArguments = null,
             string? checkPointSaveFile = null,
@@ -96,14 +96,13 @@ namespace STGP_Sharp
             this.SetMinTreeDictionariesForSatisfiableNodeTypes();
         }
 
-
         public async Task<GeneratedPopulations> RunAsync()
         {
             if (null != this.progress)
             {
-                this.progress.generationsInRunCount = this.populationParameters.numberGenerations;
-                this.progress.generationsInRunCompleted = 0;
-                this.progress.status = "Init population";
+                this.progress.GenerationsInRunCount = this.populationParameters.numberGenerations;
+                this.progress.GenerationsInRunCompleted = 0;
+                this.progress.Status = "Init population";
             }
 
             Type initializationMethodType = this.populationParameters.populationInitializationMethod.GetType();
@@ -133,7 +132,7 @@ namespace STGP_Sharp
 
             if (null != this.progress)
             {
-                this.progress.status = "Evolving";
+                this.progress.Status = "Evolving";
             }
 
             GeneratedPopulations allPopulationsFromRun = await this.SearchLoop(population);
@@ -157,8 +156,8 @@ namespace STGP_Sharp
 
             if (null != this.progress)
             {
-                this.progress.generationsInRunCount = this.populationParameters.numberGenerations;
-                this.progress.generationsInRunCompleted = 0;
+                this.progress.GenerationsInRunCount = this.populationParameters.numberGenerations;
+                this.progress.GenerationsInRunCompleted = 0;
             }
 
             var allPopulations = new List<List<Individual>>();
@@ -189,7 +188,7 @@ namespace STGP_Sharp
 
                 if (null != this.progress)
                 {
-                    this.progress.generationsInRunCompleted = generationIndex + 1;
+                    this.progress.GenerationsInRunCompleted = generationIndex + 1;
                 }
 
                 if (this.timeoutInfo.ShouldTimeout)
@@ -197,9 +196,7 @@ namespace STGP_Sharp
                     break;
                 }
 
-
                 // Only add checkpoint save if this isn't the last generation
-                //if (generationIndex + 1 <= populationParameters.numberGenerations) 
                 this.MaybeSaveProgressToCheckpointJson(allPopulations.Flatten());
 
                 this._postGenerationFunction?.Invoke();

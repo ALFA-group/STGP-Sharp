@@ -1,5 +1,6 @@
 ﻿#region
 
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,8 +13,8 @@ namespace STGP_Sharp
 {
     public class NamedArguments
     {
-        private readonly MultiValueDictionary<(string, Type), object> _dictionary =
-            new MultiValueDictionary<(string, Type), object>();
+        private readonly Dictionary<(string, Type), object> _dictionary =
+            new Dictionary<(string, Type), object>();
 
         public NamedArguments(params (string, object)[] args)
         {
@@ -48,14 +49,30 @@ namespace STGP_Sharp
             this.Add(o.GetType(), o, key);
         }
 
-        public IEnumerable<T> Get<T>(string key)
+        public T Get<T>(string key)
         {
-            if (this._dictionary.TryGetValue((key, typeof(T)), out IReadOnlyCollection<object>? collection))
-            {
-                return collection.Cast<T>();
-            }
+            this._dictionary.TryGetValue((key, typeof(T)), out object? value);
 
-            return Enumerable.Empty<T>();
+            return (T)value ?? 
+                   throw new Exception($"Object of type {typeof(T)} with key {key} not found.");
+        }
+
+        public void ReplaceOrAdd<T>(string key, T t)
+        {
+            if (null == t)
+            {
+                throw new Exception("Object added cannot be null");
+            }
+            this._dictionary.TryGetValue((key, typeof(T)), out object? value);
+
+            if (null == value)
+            {
+                this.Add(typeof(T), t, key);
+            }
+            else
+            {
+                this._dictionary[(key, typeof(T))] = t;
+            }
         }
     }
 }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using STGP_Sharp.Utilities.GeneralCSharp;
 
 #endregion
@@ -76,14 +77,14 @@ namespace STGP_Sharp.GpBuildingBlockTypes
         public BooleanConstant(bool v)
         {
             this._value = v;
-            this.symbol = v.ToString();
+            this.symbol = v.ToString(CultureInfo.InvariantCulture);
         }
 
         [RandomTreeConstructor]
         public BooleanConstant(GpFieldsWrapper gpFieldsWrapper) : base(gpFieldsWrapper)
         {
             this._value = gpFieldsWrapper.rand.NextBool();
-            this.symbol = this._value.ToString();
+            this.symbol = this._value.ToString(CultureInfo.InvariantCulture);
         }
 
         public override bool Evaluate(GpFieldsWrapper gpFieldsWrapper)

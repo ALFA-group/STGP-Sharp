@@ -400,7 +400,6 @@ namespace STGP_Sharp
             {
                 if (null != candidateConstructor.GetCustomAttribute<RandomTreeConstructorAttribute>())
                 {
-                    Debug.Assert(candidateConstructor != null);
                     return candidateConstructor;
                 }
 
@@ -417,7 +416,7 @@ namespace STGP_Sharp
                     "There is no constructor decorated with the attribute [RandomTreeConstructor] " +
                     $"and there are multiple constructors with more than 0 parameters defined for the type {t.Name}. " +
                     "This is a limitation of the code we have written. " +
-                    $"You must either change the code or change how the type {t.Name} is defined in order to continue");
+                    $"You must change the definition of the type {t.Name} to continue.");
             }
 
             return constructorToReturn;
@@ -448,10 +447,10 @@ namespace STGP_Sharp
                 {
                     typeof(TypedRootNode<>)
                 })
-                .Where(t => !t.IsAbstract);
+                .Where(t => t is {IsAbstract: false, IsGenericType: false, IsGenericTypeDefinition: false});
 
             return sortAlphabetically
-                ? types.OrderBy(GpUtility.GetBetterClassName)
+                ? types.OrderBy(GpUtility.GetNiceName)
                 : types;
         }
 
@@ -479,10 +478,8 @@ namespace STGP_Sharp
             Type[] allTypesArray = allTypes as Type[] ?? allTypes.ToArray();
             List<Type> returnTypes = allTypesArray
                 .Where(t =>
-                    t.BaseType is { IsGenericType: true } &&
+                    t is { IsGenericType: false, ContainsGenericParameters: false, BaseType: { IsGenericType: true } } && 
                     t.BaseType.GetGenericTypeDefinition().IsAssignableFrom(typeof(GpBuildingBlock<>)))
-
-                // ReSharper disable once NullableWarningSuppressionIsUsed
                 // The previous line checks that it's a subclass of ExecutableNode, so it obviously has a non-null base type.
                 .Select(t => GpReflectionCache.GetReturnTypeFromGpBuildingBlockSubClass(t.BaseType!)).ToList();
             returnTypes.AddRange(allTypesArray);

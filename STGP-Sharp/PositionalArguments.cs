@@ -68,5 +68,10 @@ namespace STGP_Sharp
             int typedIndex = untypedIndex % numOfType;
             return typedIndex;
         }
+
+        public IEnumerable<T> Get<T>()
+        {
+            return this._positionalArguments.Get<T>();
+        }
     }
 }

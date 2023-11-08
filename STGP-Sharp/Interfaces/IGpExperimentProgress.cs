@@ -1,9 +1,10 @@
-﻿namespace STGP_Sharp.Interfaces
+﻿#nullable enable
+namespace STGP_Sharp.Interfaces
 {
-    public abstract class GpExperimentProgressAbstract
+    public interface IGpExperimentProgress
     {
-        public int generationsInRunCompleted;
-        public int generationsInRunCount;
-        public string? status;
+        public int GenerationsInRunCompleted { get; set; }
+        public int GenerationsInRunCount { get; set; }
+        public string? Status { get; set; }
     }
 }

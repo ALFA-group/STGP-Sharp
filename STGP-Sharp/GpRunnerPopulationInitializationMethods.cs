@@ -15,13 +15,17 @@ namespace STGP_Sharp
 {
     public abstract class PopulationInitializationMethod
     {
-        public int maxDepth;
-
-        // Purely for use with Odin when defining a Node
-
-        public ProbabilityDistribution? probabilityDistribution;
-
-
+        /// <summary>
+        /// The max depth of genomes. This is for internal purposes of
+        /// verifying that an genomes which starts in the population is valid.
+        /// </summary>
+        private readonly int _maxDepth;
+        /// <summary>
+        /// The probability distribution for generating genomes. This is for internal purposes of
+        /// verifying that a genome which starts in the population is valid.
+        /// </summary>
+        private readonly ProbabilityDistribution? _probabilityDistribution;
+        
         protected PopulationInitializationMethod(GpPopulationParameters populationParameters) :
             this(populationParameters.probabilityDistribution, populationParameters.maxDepth)
         {
@@ -29,8 +33,8 @@ namespace STGP_Sharp
 
         protected PopulationInitializationMethod(ProbabilityDistribution? probabilityDistribution, int maxDepth)
         {
-            this.probabilityDistribution = probabilityDistribution;
-            this.maxDepth = maxDepth;
+            this._probabilityDistribution = probabilityDistribution;
+            this._maxDepth = maxDepth;
         }
 
         public virtual Task<List<Individual>> GetPopulation<T>(GpRunner gp, TimeoutInfo timeoutInfo)
@@ -54,8 +58,8 @@ namespace STGP_Sharp
 
         protected bool GenomeIsValid(Node genome)
         {
-            return this.probabilityDistribution != null &&
-                   GpRunner.IsValidTree(genome, this.probabilityDistribution, this.maxDepth);
+            return this._probabilityDistribution != null &&
+                   GpRunner.IsValidTree(genome, this._probabilityDistribution, this._maxDepth);
         }
     }
 

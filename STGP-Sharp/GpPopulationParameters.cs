@@ -19,40 +19,18 @@ namespace STGP_Sharp
         public const double DEFAULT_MUTATION_PROBABILITY = 0.2;
         public const int DEFAULT_TOURNAMENT_SIZE = 3;
         public const int DEFAULT_ELITE_SIZE = 2;
-        public const int DEFAULT_SEQ_MAX_SIZE = 2;
         public const bool DEFAULT_RAMP = true;
-        public const float DEFAULT_FLOAT_MIN = -0.5f;
-        public const float DEFAULT_FLOAT_MAX = 0.5f;
-        public const int DEFAULT_NUMBER_EXECUTIONS_FOR_MULTIPLE_EXECUTION_FITNESS_FUNCTION = 10;
-        public const int DEFAULT_NUMBER_DISCRETE_FLOAT_STEPS = 4;
-        public static readonly Vector2 DEFAULT_VECTOR2_FLOAT_MIN_VALUES = new Vector2(-0.5f, -0.5f);
-        public static readonly Vector2 DEFAULT_VECTOR2_FLOAT_MAX_VALUES = new Vector2(0.5f, 0.5f);
+        
         public readonly double crossoverProbability;
         public readonly int eliteSize;
-        public readonly float floatMax;
-        public readonly float floatMin;
         public readonly int maxDepth;
-
         public readonly double mutationProbability;
-
-        public readonly int numberDiscreteFloatSteps;
-
-        // ReSharper disable once NotAccessedField.Global
-        public readonly int numberExecutionsForMultipleExecutionFitnessFunction;
         public readonly int numberGenerations;
-
         public readonly PopulationInitializationMethod populationInitializationMethod;
-
         public readonly int populationSize;
         public readonly ProbabilityDistribution probabilityDistribution;
         public readonly bool ramp;
-
-        // ReSharper disable once NotAccessedField.Global
-        public readonly int sequenceMaxNumberOfChildren;
         public readonly int tournamentSize;
-        public readonly Vector2 vector2FloatMaxValues;
-
-        public readonly Vector2 vector2FloatMinValues;
 
         public GpPopulationParameters(
             int eliteSize = DEFAULT_ELITE_SIZE,
@@ -62,15 +40,7 @@ namespace STGP_Sharp
             int numberGenerations = DEFAULT_NUMBER_GENERATIONS,
             double crossoverProbability = DEFAULT_CROSSOVER_PROBABILITY,
             double mutationProbability = DEFAULT_MUTATION_PROBABILITY,
-            int sequenceMaxNumberOfChildren = DEFAULT_SEQ_MAX_SIZE,
             bool ramp = DEFAULT_RAMP,
-            float floatMin = DEFAULT_FLOAT_MIN,
-            float floatMax = DEFAULT_FLOAT_MAX,
-            int numberDiscreteFloatSteps = DEFAULT_NUMBER_DISCRETE_FLOAT_STEPS,
-            int numberExecutionsForMultipleExecutionFitnessFunction =
-                DEFAULT_NUMBER_EXECUTIONS_FOR_MULTIPLE_EXECUTION_FITNESS_FUNCTION,
-            Vector2? vector2FloatMinValues = null,
-            Vector2? vector2FloatMaxValues = null,
             ProbabilityDistribution? probabilityDistribution = null,
             PopulationInitializationMethod? populationInitializationMethod = null)
         {
@@ -81,24 +51,7 @@ namespace STGP_Sharp
             this.numberGenerations = numberGenerations;
             this.crossoverProbability = crossoverProbability;
             this.mutationProbability = mutationProbability;
-            this.sequenceMaxNumberOfChildren = sequenceMaxNumberOfChildren;
             this.ramp = ramp;
-            this.floatMin = floatMin;
-            this.floatMax = floatMax;
-            this.numberDiscreteFloatSteps = numberDiscreteFloatSteps;
-
-            this.vector2FloatMinValues = vector2FloatMinValues ?? DEFAULT_VECTOR2_FLOAT_MIN_VALUES;
-            this.vector2FloatMaxValues = vector2FloatMaxValues ?? DEFAULT_VECTOR2_FLOAT_MAX_VALUES;
-            if (vector2FloatMaxValues == vector2FloatMinValues && vector2FloatMaxValues == new Vector2(0, 0))
-            {
-                // Almost certainly deserialized from old Vector3 data format
-                this.vector2FloatMinValues = DEFAULT_VECTOR2_FLOAT_MIN_VALUES;
-                this.vector2FloatMaxValues = DEFAULT_VECTOR2_FLOAT_MAX_VALUES;
-            }
-
-            this.numberExecutionsForMultipleExecutionFitnessFunction =
-                numberExecutionsForMultipleExecutionFitnessFunction;
-
             this.probabilityDistribution = probabilityDistribution ??
                                            new ProbabilityDistribution(new List<TypeProbability>
                                                { new TypeProbability() });
@@ -111,15 +64,12 @@ namespace STGP_Sharp
         private void AssertInputsAreValid()
         {
             Debug.Assert(this.populationSize > 0);
-            Debug.Assert(this.eliteSize >= this.populationSize);
-            Debug.Assert(this.tournamentSize >= this.populationSize);
+            Debug.Assert(this.eliteSize <= this.populationSize);
+            Debug.Assert(this.tournamentSize <= this.populationSize);
             Debug.Assert(this.maxDepth > 0);
-            Debug.Assert(this.numberExecutionsForMultipleExecutionFitnessFunction > 0);
-            Debug.Assert(this.sequenceMaxNumberOfChildren > 0);
             Debug.Assert(this.crossoverProbability is >= 0 and <= 1);
             Debug.Assert(this.mutationProbability is >= 0 and <= 1);
             Debug.Assert(this.numberGenerations >= 0);
-            Debug.Assert(this.numberDiscreteFloatSteps >= 1);
         }
     }
 }

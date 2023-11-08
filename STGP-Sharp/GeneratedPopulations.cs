@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using STGP_Sharp.Fitness_and_Gp_Results;
 using STGP_Sharp.Fitness_and_Gp_Results.Gp_Results_Stats;
 using STGP_Sharp.Utilities.GeneralCSharp;
 using STGP_Sharp.Utilities.GP;
@@ -36,9 +37,6 @@ namespace STGP_Sharp
         public readonly Individual? bestEver;
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public readonly DateTime endTime;
-
-        // ReSharper disable once MemberCanBePrivate.Global
         public readonly List<Generation> generations;
 
         public readonly List<List<Individual>> generationsAsNestedList;
@@ -48,6 +46,9 @@ namespace STGP_Sharp
 
         // ReSharper disable once MemberCanBePrivate.Global
         public readonly DateTime startTime;
+
+        // ReSharper disable once MemberCanBePrivate.Global
+        public readonly DateTime endTime;
 
         public readonly VerboseInfo verboseInfo;
 
@@ -78,16 +79,6 @@ namespace STGP_Sharp
             this.verboseInfo = verboseInfo;
         }
 
-        public Individual? GetBestEver()
-        {
-            return GetBestEver(this.generationsAsNestedList);
-        }
-
-        private static Individual? GetBestEver(IEnumerable<IEnumerable<Individual>> populations)
-        {
-            return populations.Last().SortedByFitness().FirstOrDefault();
-        }
-
         public GeneratedPopulations DeepCopy()
         {
             List<List<Individual>> newPopulations = this.generations.Select(population =>
@@ -98,6 +89,16 @@ namespace STGP_Sharp
 
             return new GeneratedPopulations(newPopulations, this.fitnessSummary, this.startTime, this.endTime,
                 this.bestEver, this.verboseInfo);
+        }
+        
+        public List<List<T>> GetFitnessValuesForAllGenerations<T>() where T : FitnessBase
+        {
+            return this.generationsAsNestedList
+                .Select(individuals => individuals
+                    .Select(i => i.fitness as T)
+                    .WhereNotNull()
+                    .ToList()
+                ).ToList();
         }
     }
 }

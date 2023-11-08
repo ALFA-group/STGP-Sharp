@@ -69,15 +69,12 @@ namespace STGP_Sharp
     ///     Thus, we include the field <see cref="Node.DoesChildrenOrderMatter" /> to allow for one special method.
     ///     In the future, maybe we will
     ///     refactor the node class to take the node symbol as a parameter to the constructor, and rewrite Node.DeepCopy. For
-    ///     now, this is
-    ///     simpler.
+    ///     now, this is simpler.
     /// </remarks>
     public class Node
     {
         public readonly Type returnType;
-
         public List<Node> children;
-
         public string symbol;
 
 
@@ -89,12 +86,7 @@ namespace STGP_Sharp
             this.returnType = returnType;
         }
 
-        public Node(Type returnType)
-        {
-            this.symbol = this.GetType().Name;
-            this.children = new List<Node>();
-            this.returnType = returnType;
-        }
+        public Node(Type returnType) : this(returnType, new List<Node>()) { }
 
         public virtual bool DoesChildrenOrderMatter => true;
 

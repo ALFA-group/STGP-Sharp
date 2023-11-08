@@ -3,6 +3,7 @@
 #region
 
 using System;
+using System.Globalization;
 using STGP_Sharp.Fitness_and_Gp_Results.Gp_Results_Stats;
 using STGP_Sharp.Utilities.GeneralCSharp;
 
@@ -89,7 +90,7 @@ namespace STGP_Sharp.Fitness_and_Gp_Results
 
         public override string ToString()
         {
-            return this.fitnessScore.ToString();
+            return this.fitnessScore.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace STGP_Sharp.GpBuildingBlockTypes
     {
         public TypedRootNode(GpBuildingBlock<TReturnType> child) : base(child)
         {
-            this.symbol = "RootNode" + GpUtility.GetBetterClassName(typeof(TReturnType));
+            this.symbol = "RootNode" + GpUtility.GetNiceName(typeof(TReturnType));
         }
 
         public GpBuildingBlock<TReturnType> Child =>
